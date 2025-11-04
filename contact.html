@@ -4,144 +4,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact — Alan Suleimanov</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <style>
-      body {
-        background: linear-gradient(-45deg, #0e0e10, #1a1b29, #111827, #0f172a);
-        background-size: 400% 400%;
-        animation: gradient 12s ease infinite;
-        color: white;
-        font-family: "Poppins", sans-serif;
-        min-height: 100vh;
-        transition: background 0.5s ease, color 0.5s ease;
-      }
-      @keyframes gradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-      }
-      .glow { text-shadow: 0 0 10px #00f5ff, 0 0 20px #00f5ff; }
-      .nav-link { margin: 0 1rem; color: #ccc; transition: 0.3s; }
-      .nav-link:hover { color: #00f5ff; text-shadow: 0 0 8px #00f5ff; }
-      .card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(12px);
-        border-radius: 20px;
-        padding: 2rem;
-        transition: 0.3s;
-      }
-      .card:hover {
-        transform: translateY(-4px);
-        border-color: #00f5ff;
-        box-shadow: 0 0 20px rgba(0, 245, 255, 0.15);
-      }
-      .social-icon {
-        display: inline-block;
-        margin: 0.5rem;
-        transition: transform 0.3s ease, filter 0.3s ease;
-      }
-      .social-icon:hover {
-        transform: translateY(-3px);
-        filter: drop-shadow(0 0 8px #00f5ff);
-      }
-      /* Dark Mode */
-      .dark {
-        background: #f7f7f7;
-        color: #0f172a;
-      }
-      .dark .card {
-        background: rgba(0, 0, 0, 0.05);
-        color: #1e293b;
-      }
-      .dark .glow { text-shadow: none; }
-      .toggle-btn {
-        border: 1px solid #00f5ff;
-        padding: 0.3rem 0.8rem;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        background: transparent;
-        color: #00f5ff;
-        cursor: pointer;
-        transition: 0.3s;
-      }
-      .toggle-btn:hover {
-        background: #00f5ff;
-        color: #000;
-      }
+      body { font-family: 'JetBrains Mono', monospace; padding: 3rem 1.5rem; transition: background .3s, color .3s; }
+      body.light { background: #fff; color: #111; }
+      body.dark { background: #0f0f0f; color: #e2e2e2; }
+      a { color: #007acc; } body.dark a { color: #5cd3ff; }
+      .toggle-btn { border: 1px solid #aaa; padding: .4rem .8rem; border-radius: 8px; cursor: pointer; }
     </style>
   </head>
 
-  <body class="flex flex-col items-center px-6 py-10">
-    <!-- NAVBAR -->
-    <nav class="w-full max-w-5xl flex justify-center mb-12 text-lg items-center">
-      <a href="index.html" class="nav-link">Home</a>
-      <a href="projects.html" class="nav-link">Projects</a>
-      <a href="about.html" class="nav-link">About</a>
-      <a href="photography.html" class="nav-link">Photography</a>
-      <a href="contact.html" class="nav-link text-white font-semibold">Contact</a>
-      <button id="toggle" class="toggle-btn ml-4">Dark Mode</button>
-    </nav>
+  <body class="light max-w-2xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <div class="text-xl font-semibold">◆ Contact</div>
+      <button class="toggle-btn" id="themeToggle">Dark mode</button>
+    </div>
 
-    <!-- CONTACT SECTION -->
-    <main class="max-w-lg mx-auto text-center text-gray-300">
-      <h1 class="text-5xl font-bold mb-4 glow">Get in Touch</h1>
-      <p class="text-lg text-gray-400 mb-10">
-        Whether you want to collaborate, discuss ideas, or just say hello — I’d love to connect.
-      </p>
+    <div class="nav mb-6">
+      <a href="index.html">Home</a> |
+      <a href="projects.html">Projects</a> |
+      <a href="about.html">About</a> |
+      <a href="portfolio.html">Portfolio</a> |
+      <a href="contact.html" class="font-semibold">Contact</a>
+    </div>
 
-      <div class="card space-y-4">
-        <p>
-          <b>Email:</b>
-          <a
-            href="mailto:alan.a.suleimanov@gmail.com"
-            class="text-blue-400 hover:text-blue-300"
-            >alan.a.suleimanov@gmail.com</a
-          >
-        </p>
-        <p><b>Location:</b> Ontario, Canada</p>
+    <p>📧 <b>Email:</b> <a href="mailto:alan.a.suleimanov@gmail.com">alan.a.suleimanov@gmail.com</a></p>
+    <p>💼 <b>LinkedIn:</b> <a href="https://linkedin.com/in/alan-suleimanov">linkedin.com/in/alan-suleimanov</a></p>
+    <p>💻 <b>GitHub:</b> <a href="https://github.com/GroovieYT">github.com/GroovieYT</a></p>
+    <p>🐦 <b>X:</b> <a href="https://x.com">x.com</a></p>
 
-        <div class="flex justify-center space-x-4 mt-6">
-          <a href="https://github.com/GroovieYT" target="_blank" class="social-icon">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v10/icons/github.svg" width="32" />
-          </a>
-          <a href="https://linkedin.com/in/alan-suleimanov" target="_blank" class="social-icon">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v10/icons/linkedin.svg" width="32" />
-          </a>
-          <a href="https://x.com/" target="_blank" class="social-icon">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v10/icons/x.svg" width="32" />
-          </a>
-          <a href="mailto:alan.a.suleimanov@gmail.com" class="social-icon">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v10/icons/gmail.svg" width="32" />
-          </a>
-        </div>
-      </div>
-
-      <div class="mt-10">
-        <a href="index.html" class="text-blue-400 hover:text-blue-300 transition">← Back to Home</a>
-      </div>
-    </main>
-
-    <footer class="mt-16 py-6 text-gray-500 text-sm text-center">
-      © <span id="year"></span> Alan Suleimanov. All rights reserved.
-    </footer>
+    <footer class="mt-6 text-sm text-gray-500">© <span id="year"></span> Alan Suleimanov</footer>
 
     <script>
-      // year update
-      document.getElementById("year").innerText = new Date().getFullYear();
-
-      // dark mode toggle
-      const toggleBtn = document.getElementById("toggle");
+      document.getElementById('year').innerText = new Date().getFullYear();
+      const toggleBtn = document.getElementById('themeToggle');
       const body = document.body;
-      let dark = false;
-
-      toggleBtn.addEventListener("click", () => {
-        dark = !dark;
-        body.classList.toggle("dark");
-        toggleBtn.innerText = dark ? "Light Mode" : "Dark Mode";
+      if (localStorage.getItem('theme') === 'dark') body.classList.replace('light', 'dark');
+      toggleBtn.addEventListener('click', () => {
+        if (body.classList.contains('light')) { body.classList.replace('light', 'dark'); localStorage.setItem('theme', 'dark'); }
+        else { body.classList.replace('dark', 'light'); localStorage.setItem('theme', 'light'); }
       });
     </script>
   </body>
