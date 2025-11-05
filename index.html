@@ -1,158 +1,248 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="transition-colors duration-300">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alan Suleimanov</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Comet Cursor Trail (Theme‑Aware)</title>
+  <meta name="description" content="Soft physics comet cursor trail that auto-inverts in light/dark themes." />
   <style>
-    :root { --link-light:#6b7280; --link-light-hover:#111; --link-dark:#9ca3af; --link-dark-hover:#e5e7eb; }
-    body {
-      font-family: 'JetBrains Mono', monospace;
-      transition: background .4s ease, color .4s ease;
-      line-height: 1.8;
-      padding: 3rem 1.5rem;
-      overflow-x: hidden;
-      cursor: none;
+    :root {
+      color-scheme: light dark;
+      --bg-light: #ffffff;
+      --bg-dark: #0b0b0b;
+      --fg-light: #000000;
+      --fg-dark: #ffffff;
+      --accent: #8aa0ff;
     }
-    body.light { background:#fff; color:#111; }
-    body.dark { background: radial-gradient(1200px 600px at 10% -10%, rgba(255,120,90,.12), transparent 40%), linear-gradient(#0a0a0a,#171717); color:#e2e2e2; }
 
-    .title { font-size:1.6rem; font-weight:600; margin-bottom:1rem; }
-    .divider { border-top:1px solid #ddd; margin:2rem 0; }
-    body.dark .divider { border-top:1px solid #222; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
 
-    a.link { text-decoration:none; transition:color .2s ease; }
-    body.light a.link { color:var(--link-light); }
-    body.light a.link:hover { color:var(--link-light-hover); }
-    body.dark a.link { color:var(--link-dark); }
-    body.dark a.link:hover { color:var(--link-dark-hover); }
+    /* Demo background gradients (can be removed in integration) */
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+        Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(180deg, #f7f7f8 0%, #ffffff 100%);
+      color: #111;
+      transition: background 300ms ease, color 300ms ease;
+    }
 
-    .nav a { transition: transform .15s ease, color .2s ease; }
-    .nav a:hover { transform: translateY(-2px); }
+    .dark body {
+      background: linear-gradient(180deg, #0e0f12 0%, #000 100%);
+      color: #eaeaea;
+    }
 
-    .toggle-btn {
-      border:1px solid #aaa; padding:.4rem .8rem; border-radius:8px;
-      background:transparent; font-size:.9rem; transition:background .2s;
+    /* Canvas that draws the trail */
+    #cursor-trail {
+      position: fixed;
+      inset: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none; /* don't block clicks */
+      z-index: 2147483647; /* above all content */
+      display: block;
+    }
+
+    /* Small demo UI for toggling theme (remove in integration) */
+    .demo-bar {
+      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: color-mix(in srgb, canvas, transparent 30%);
+      backdrop-filter: blur(8px);
+      border: 1px solid color-mix(in srgb, currentColor, transparent 75%);
+      border-radius: 999px;
+      padding: 8px 12px;
+      display: flex; gap: 8px; align-items: center;
+      z-index: 2147483646;
+      font-size: 14px;
+    }
+    .demo-btn {
+      border: 1px solid currentColor;
+      background: transparent;
+      border-radius: 999px;
+      padding: 6px 10px;
       cursor: pointer;
     }
-    .toggle-btn:hover { background:#f2f2f2; }
-    body.dark .toggle-btn:hover { background:#222; }
-
-    .cursor-dot {
-      position: fixed; top:0; left:0; width:16px; height:16px; border-radius:50%;
-      pointer-events:none; transform:translate(-50%,-50%); z-index:50;
-      transition: width .15s, height .15s, opacity .2s;
-      mix-blend-mode: difference;
-    }
-    body.light .cursor-dot { background:#000; }
-    body.dark .cursor-dot { background:#fff; }
-    .cursor-hover { width:28px !important; height:28px !important; opacity:.6; }
-
-    #fx { position:fixed; inset:0; z-index:0; pointer-events:none; }
-    .wrap { position:relative; z-index:10; max-width:42rem; margin:0 auto; }
   </style>
 </head>
+<body>
+  <canvas id="cursor-trail"></canvas>
 
-<body class="light">
-  <canvas id="fx"></canvas>
-  <div class="cursor-dot" id="cursor"></div>
-
-  <div class="wrap">
-    <div class="flex justify-between items-center mb-6">
-      <div class="title">◆ Alan Suleimanov</div>
-      <button class="toggle-btn" id="themeToggle">Dark mode</button>
-    </div>
-
-    <nav class="nav mb-6">
-      <div class="flex flex-wrap gap-3">
-        <a href="index.html" class="link font-semibold">Home</a>
-        <a href="projects.html" class="link">Projects</a>
-        <a href="about.html" class="link">About</a>
-        <a href="portfolio.html" class="link">Portfolio</a>
-      </div>
-    </nav>
-
-    <p>↳ Honours Computer Science at
-      <a href="https://www.uwo.ca/" target="_blank" class="link logo-link">
-        <img src="https://logo.clearbit.com/uwo.ca" alt="Western University" style="height:22px;vertical-align:middle;margin-right:6px;opacity:.95">Western University
-      </a>.
-    </p>
-
-    <p>↳ Quantitative Analyst at
-      <a href="https://deutsche-boerse.com" target="_blank" class="link logo-link">
-        <img src="https://logo.clearbit.com/deutsche-boerse.com" alt="Deutsche Börse Group" style="height:22px;vertical-align:middle;margin-right:6px;opacity:.95">Deutsche Börse Group
-      </a>.
-    </p>
-
-    <p>↳ Former Software Engineer Intern at
-      <a href="https://www.sap.com" target="_blank" class="link logo-link">
-        <img src="https://logo.clearbit.com/sap.com" alt="SAP" style="height:22px;vertical-align:middle;margin-right:6px;opacity:.95">SAP Labs Bucharest
-      </a> and Data Analyst at
-      <a href="https://www.pwc.com" target="_blank" class="link logo-link">
-        <img src="https://logo.clearbit.com/pwc.com" alt="PwC" style="height:22px;vertical-align:middle;margin-right:6px;opacity:.95">PwC
-      </a>.
-    </p>
-
-    <p>↳ Focused on AI systems, data infrastructure, and quantitative finance.</p>
-
-    <div class="divider"></div>
-
-    <footer class="text-sm opacity-80">
-      © <span id="year"></span> Alan Suleimanov —
-      <a href="mailto:alan.a.suleimanov@gmail.com" class="link">Email</a> ·
-      <a href="https://github.com/GroovieYT" class="link">GitHub</a> ·
-      <a href="https://linkedin.com/in/alan-suleimanov" class="link">LinkedIn</a> ·
-      <a href="https://x.com" class="link">X</a>
-    </footer>
+  <!-- Demo controls (safe to remove when integrating into your site) -->
+  <div class="demo-bar" aria-hidden="true">
+    <span>Theme:</span>
+    <button class="demo-btn" id="theme-light">Light</button>
+    <button class="demo-btn" id="theme-dark">Dark</button>
+    <button class="demo-btn" id="theme-auto">Auto</button>
   </div>
 
   <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+    (function () {
+      const canvas = document.getElementById('cursor-trail');
+      const ctx = canvas.getContext('2d');
 
-    const toggleBtn = document.getElementById("themeToggle");
-    const body = document.body;
-    if (localStorage.getItem("theme") === "dark") { body.classList.replace("light","dark"); toggleBtn.textContent="Light mode"; }
-    toggleBtn.addEventListener("click", () => {
-      if (body.classList.contains("light")) { body.classList.replace("light","dark"); toggleBtn.textContent="Light mode"; localStorage.setItem("theme","dark"); }
-      else { body.classList.replace("dark","light"); toggleBtn.textContent="Dark mode"; localStorage.setItem("theme","light"); }
-    });
+      // DPR-aware canvas
+      let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+      function resize() {
+        dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+        const { innerWidth: w, innerHeight: h } = window;
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      window.addEventListener('resize', resize, { passive: true });
+      resize();
 
-    const cursor = document.getElementById("cursor");
-    let cx = window.innerWidth/2, cy = window.innerHeight/2, tx = cx, ty = cy;
-    document.addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; });
-    function animateCursor(){
-      cx += (tx - cx)*0.2; cy += (ty - cy)*0.2;
-      cursor.style.transform = `translate(${cx}px,${cy}px)`;
-      requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
+      // Track pointer
+      const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      const target = { x: pointer.x, y: pointer.y };
 
-    const links = document.querySelectorAll("a, button");
-    links.forEach(el => {
-      el.addEventListener("mouseenter", () => cursor.classList.add("cursor-hover"));
-      el.addEventListener("mouseleave", () => cursor.classList.remove("cursor-hover"));
-    });
+      function onMove(e) {
+        if (e.touches && e.touches[0]) {
+          target.x = e.touches[0].clientX; target.y = e.touches[0].clientY;
+        } else {
+          target.x = e.clientX; target.y = e.clientY;
+        }
+      }
+      window.addEventListener('mousemove', onMove, { passive: true });
+      window.addEventListener('touchmove', onMove, { passive: true });
 
-    const canvas = document.getElementById("fx");
-    const ctx = canvas.getContext("2d");
-    function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    resize(); window.addEventListener("resize", resize);
-    let px = tx, py = ty;
-    function loop(){
-      ctx.fillStyle = body.classList.contains("dark") ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.08)";
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-      const grad = ctx.createRadialGradient(px,py,0,px,py,70);
-      if (body.classList.contains("dark")) { grad.addColorStop(0,"rgba(255,255,255,0.22)"); grad.addColorStop(1,"rgba(255,255,255,0)"); }
-      else { grad.addColorStop(0,"rgba(0,0,0,0.22)"); grad.addColorStop(1,"rgba(0,0,0,0)"); }
-      ctx.globalCompositeOperation = "lighter";
-      ctx.fillStyle = grad;
-      ctx.beginPath(); ctx.arc(px,py,70,0,Math.PI*2); ctx.fill();
-      ctx.globalCompositeOperation = "source-over";
-      px += (tx - px)*0.25; py += (ty - py)*0.25;
-      requestAnimationFrame(loop);
-    }
-    loop();
+      // Physics trail points
+      const N = 14; // number of nodes
+      const pts = Array.from({ length: N }, () => ({ x: pointer.x, y: pointer.y }));
+
+      // Lerp helpers
+      const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      // Theme detection + background luminance
+      const mqDark = window.matchMedia('(prefers-color-scheme: dark)');
+      function hexToRgb(str) {
+        const ctx = document.createElement('canvas').getContext('2d');
+        ctx.fillStyle = str; // lets the canvas parse colors
+        const computed = ctx.fillStyle;
+        // computed is like #rrggbb
+        const m = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(computed);
+        if (!m) return { r: 255, g: 255, b: 255 };
+        return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
+      }
+      function srgbToLinear(u) {
+        u = u / 255;
+        return u <= 0.04045 ? u / 12.92 : Math.pow((u + 0.055) / 1.055, 2.4);
+      }
+      function getBgLuminance() {
+        const cs = getComputedStyle(document.body);
+        const bg = cs.backgroundColor;
+        // backgroundColor may be rgba(...) or transparent if gradient; fall back to color if needed
+        let r=255,g=255,b=255, a=1;
+        const rgba = /rgba?\(([^)]+)\)/.exec(bg);
+        if (rgba) {
+          const parts = rgba[1].split(',').map(s => s.trim());
+          r = parseFloat(parts[0]); g = parseFloat(parts[1]); b = parseFloat(parts[2]);
+          a = parts[3] !== undefined ? parseFloat(parts[3]) : 1;
+        } else {
+          const { r: rr, g: gg, b: bb } = hexToRgb(bg || '#fff');
+          r = rr; g = gg; b = bb;
+        }
+        const R = srgbToLinear(r), G = srgbToLinear(g), B = srgbToLinear(b);
+        // WCAG relative luminance
+        return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+      }
+      function isDarkTheme() {
+        // Priority: .dark class on <html> -> prefers-color-scheme -> background luminance
+        const html = document.documentElement;
+        if (html.classList.contains('dark')) return true;
+        if (html.classList.contains('light')) return false;
+        if (mqDark.matches) return true;
+        // fall back to luminance of page background
+        return getBgLuminance() < 0.45;
+      }
+
+      // Color resolver
+      function getTrailRGBA(alpha) {
+        const dark = isDarkTheme();
+        const c = dark ? 255 : 0;
+        return `rgba(${c}, ${c}, ${c}, ${alpha})`;
+      }
+
+      // Listen for theme changes (MutationObserver for class changes, mql for OS changes)
+      const observer = new MutationObserver(() => { /* no-op, color is read each frame */ });
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      mqDark.addEventListener?.('change', () => { /* color updates next frame */ });
+
+      let last = performance.now();
+      let raf; // requestAnimationFrame id
+
+      function frame(t) {
+        const dt = clamp((t - last) / 16.6667, 0, 3); // normalize to ~60fps steps
+        last = t;
+
+        // Ease pointer toward target (natural feel)
+        const follow = 0.35; // larger = snappier head
+        pointer.x = lerp(pointer.x, target.x, 1 - Math.pow(1 - follow, dt));
+        pointer.y = lerp(pointer.y, target.y, 1 - Math.pow(1 - follow, dt));
+
+        // Follow-the-leader for trail nodes
+        const tightness = 0.25; // lower = looser string
+        pts[0].x = lerp(pts[0].x, pointer.x, 1 - Math.pow(1 - 0.5, dt));
+        pts[0].y = lerp(pts[0].y, pointer.y, 1 - Math.pow(1 - 0.5, dt));
+        for (let i = 1; i < N; i++) {
+          pts[i].x = lerp(pts[i].x, pts[i - 1].x, 1 - Math.pow(1 - tightness, dt));
+          pts[i].y = lerp(pts[i].y, pts[i - 1].y, 1 - Math.pow(1 - tightness, dt));
+        }
+
+        // Clear with a slight fade for smoother trails (motion persistence)
+        const fade = isDarkTheme() ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.12)';
+        ctx.fillStyle = fade;
+        ctx.fillRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+
+        // Draw trail segments
+        for (let i = 0; i < N - 1; i++) {
+          const p = pts[i];
+          const q = pts[i + 1];
+          const tpos = i / (N - 1);
+          const size = 8 * (1 - tpos) + 2; // head thicker
+          const alpha = 0.12 + (1 - tpos) * 0.35; // brighter near head
+          ctx.strokeStyle = getTrailRGBA(alpha);
+          ctx.lineWidth = size;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+
+        raf = requestAnimationFrame(frame);
+      }
+
+      // Initialize canvas to a fully transparent layer (so first fade doesn't flash)
+      ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+      raf = requestAnimationFrame(frame);
+
+      // Pause when tab is hidden to save battery/CPU
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          cancelAnimationFrame(raf);
+        } else {
+          last = performance.now();
+          raf = requestAnimationFrame(frame);
+        }
+      });
+
+      // Demo theme toggles (optional)
+      const html = document.documentElement;
+      const btnLight = document.getElementById('theme-light');
+      const btnDark = document.getElementById('theme-dark');
+      const btnAuto = document.getElementById('theme-auto');
+      if (btnLight && btnDark && btnAuto) {
+        btnLight.addEventListener('click', () => { html.classList.remove('dark'); html.classList.add('light'); });
+        btnDark.addEventListener('click',  () => { html.classList.remove('light'); html.classList.add('dark'); });
+        btnAuto.addEventListener('click',  () => { html.classList.remove('light', 'dark'); });
+      }
+    })();
   </script>
 </body>
 </html>
