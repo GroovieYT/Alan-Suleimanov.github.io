@@ -12,18 +12,15 @@
       line-height: 1.8;
       padding: 3rem 1.5rem;
       overflow-x: hidden;
-      cursor: none; /* Hide default pointer */
+      cursor: none;
     }
     body.light { background: #fff; color: #111; }
     body.dark { background: #0f0f0f; color: #e2e2e2; }
-
     a { color: #007acc; text-decoration: none; transition: color 0.2s; }
     a:hover { color: #5cd3ff; }
-
     .title { font-size: 1.6rem; font-weight: 600; margin-bottom: 1rem; }
     .divider { border-top: 1px solid #ddd; margin: 2rem 0; }
     body.dark .divider { border-top: 1px solid #1c1c1d; }
-
     .toggle-btn {
       border: 1px solid #aaa;
       padding: 0.4rem 0.8rem;
@@ -35,8 +32,6 @@
     }
     .toggle-btn:hover { background-color: #f2f2f2; }
     body.dark .toggle-btn:hover { background-color: #222; }
-
-    /* Custom cursor */
     .cursor-dot {
       position: fixed;
       top: 0;
@@ -52,13 +47,11 @@
     }
     body.light .cursor-dot { background: #000; }
     body.dark .cursor-dot { background: #fff; }
-
     .cursor-hover {
       width: 30px !important;
       height: 30px !important;
       opacity: 0.5 !important;
     }
-
     .logo-link img {
       height: 22px;
       vertical-align: middle;
@@ -122,10 +115,7 @@
   </footer>
 
   <script>
-    // Year
     document.getElementById("year").innerText = new Date().getFullYear();
-
-    // Dark mode
     const toggleBtn = document.getElementById("themeToggle");
     const body = document.body;
     if (localStorage.getItem("theme") === "dark") {
@@ -143,15 +133,11 @@
         localStorage.setItem("theme", "light");
       }
     });
-
-    // Custom cursor
     const cursor = document.getElementById("cursor");
     document.addEventListener("mousemove", (e) => {
       cursor.style.top = `${e.clientY}px`;
       cursor.style.left = `${e.clientX}px`;
     });
-
-    // Hover grow on links
     const links = document.querySelectorAll("a, button");
     links.forEach((el) => {
       el.addEventListener("mouseenter", () => cursor.classList.add("cursor-hover"));
